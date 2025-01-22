@@ -12,9 +12,15 @@ const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet());
+
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*'
+  origin: '*', // During development, allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  maxAge: 86400 // Cache preflight requests for 24 hours
 }));
+
 app.use(express.json());
 
 // Rate limiting
