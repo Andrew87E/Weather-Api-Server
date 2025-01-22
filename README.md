@@ -1,4 +1,5 @@
 # .env.example
+
 DATABASE_URL="postgresql://user:password@localhost:5432/weather_app"
 REDIS_URL="redis://localhost:6379"
 JWT_SECRET="your-secret-key"

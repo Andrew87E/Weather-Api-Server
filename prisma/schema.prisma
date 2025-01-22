@@ -1,3 +1,4 @@
+// prisma/schema.prisma
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -15,3 +16,13 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model ApiUsage {
+  id        String   @id @default(uuid())
+  service   String   // 'pirate-sky' or 'openweather'
+  month     DateTime // First day of the month
+  calls     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([service, month], name: "service_month")
+}

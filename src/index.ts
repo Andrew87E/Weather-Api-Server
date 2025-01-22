@@ -8,6 +8,7 @@ import { weatherRouter } from './routes/weather';
 import { authRouter } from './routes/auth';
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet());
@@ -29,7 +30,28 @@ if (!process.env.REDIS_URL) {
 }
 const redis = new Redis(process.env.REDIS_URL);
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 // Routes
 app.use('/auth', authRouter);
 app.use('/api/weather', authenticateUser, weatherRouter);
 
+// Error handling middleware
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Closing HTTP server...');
+  redis.disconnect();
+  process.exit(0);
+});
